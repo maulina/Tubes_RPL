@@ -13,6 +13,9 @@ import java.sql.*;
 import javax.swing.table.*;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import static javax.swing.JFrame.EXIT_ON_CLOSE;
 public class login extends javax.swing.JFrame {
 
     /**
@@ -22,6 +25,7 @@ public class login extends javax.swing.JFrame {
     Statement stat;
     public login() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -42,15 +46,101 @@ public class login extends javax.swing.JFrame {
     public void Login(){
         try{
             ResultSet set;
-            String result = "o";
             konekDB();
-            String sql = "Select username, password from login where username = '"+jTextField1.getText().trim()+"'"+"and password = '"+jPasswordField1.getText().trim()+"'";
+            String sql = "Select username, password, jenis_user from login where username = '"+jTextField1.getText().trim()+"'"+"and password = '"+jPasswordField1.getText().trim()+"'";
             set = stat.executeQuery(sql);
             
             if(set.next()){
                 JOptionPane.showMessageDialog(null, "Berhasil Login!");
-                new menu().setVisible(true);
-                this.dispose();
+                if(set.getString("jenis_user").equals("Manager")){
+                    Form_laporan l = new Form_laporan() {
+
+                        @Override
+                        public void windowOpened(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowClosing(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowIconified(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowDeiconified(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowActivated(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowDeactivated(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+                    };
+                    l.setVisible(true);
+                l.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                l.addWindowListener(new WindowAdapter() {
+                    database db = new database();
+                    public void windowClosing(WindowEvent e){
+                        String sql = "update login set status = ' ' where status = 'active';";
+                        db.query(sql);
+                    }
+                });
+                }
+                else{
+                    menu m = new menu() {
+
+                        @Override
+                        public void windowOpened(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowClosing(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowIconified(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowDeiconified(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowActivated(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public void windowDeactivated(WindowEvent e) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+                    };
+                    m.setVisible(true);
+                }
+                this.setVisible(false);
             }
             else{
                 JOptionPane.showMessageDialog(null, "Gagal Login!!","Peringatan!", JOptionPane.WARNING_MESSAGE);
@@ -61,6 +151,13 @@ public class login extends javax.swing.JFrame {
         }
         catch(Exception e){
             System.out.println("Kesalahan : "+e.toString());
+        }
+        try{
+            String sql = "update login set status = 'active' where username = '"+jTextField1.getText()+"';";
+            stat.executeUpdate(sql);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Error :"+e.getMessage(), "Communication Error", JOptionPane.WARNING_MESSAGE);
         }
     }
     public void status(){
@@ -85,7 +182,6 @@ public class login extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         Login = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jPasswordField1 = new javax.swing.JPasswordField();
 
@@ -122,13 +218,6 @@ public class login extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Sign Up");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
         jButton3.setText("Exit");
         jButton3.setToolTipText("");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -144,7 +233,7 @@ public class login extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(153, 153, 153)
                 .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(155, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -159,9 +248,7 @@ public class login extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(Login)
-                        .addGap(46, 46, 46)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton3)
                         .addGap(28, 28, 28))))
         );
@@ -181,7 +268,6 @@ public class login extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Login)
-                    .addComponent(jButton2)
                     .addComponent(jButton3)))
         );
 
@@ -204,12 +290,6 @@ public class login extends javax.swing.JFrame {
         if(JOptionPane.showConfirmDialog(null, "Anda yakin ingin keluar?","Keluar",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
             System.exit(0);
         }
-    }                                        
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
-        new registration().show();
-        this.dispose();
     }                                        
 
     /**
@@ -249,7 +329,6 @@ public class login extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify                     
     private javax.swing.JButton Login;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
